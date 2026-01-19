@@ -1,0 +1,15 @@
+node_modules
+npm-debug.log*
+stock-advisor/node_modules
+stock-advisor/build
+stock-advisor/dist
+.git
+.gitignore
+*.md
+.DS_Store
+Thumbs.db
+.idea
+.vscode
+*.swp
+*.swo
+fly.toml
