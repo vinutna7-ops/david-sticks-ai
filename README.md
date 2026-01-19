@@ -2,6 +2,10 @@
 
 A modern, mobile-first stock investment app with AI-powered ratings, predictions, and personalized financial guidance designed for young investors (ages 18-30).
 
+## Live Demo
+
+**Deployed on Fly.io:** https://david-sticks-ai-abzdzq.fly.dev
+
 ## Features
 
 ### User Onboarding
@@ -106,21 +110,29 @@ Personalized guidance including:
 
 ### Project Structure
 ```
-src/
-├── components/
-│   ├── advisor/     # AI Advisor chat interface
-│   ├── common/      # Shared components (Navigation, Cards, etc.)
-│   ├── home/        # Home, Search, Profile tabs
-│   ├── learn/       # Beginner guide content
-│   ├── onboarding/  # User onboarding flow
-│   └── stock/       # Stock detail view
-├── contexts/        # React Context providers
-├── services/        # Business logic
-│   ├── stockData.ts     # Mock stock data
-│   ├── aiRating.ts      # Rating/prediction algorithms
-│   └── learningContent.ts # Educational content
-├── types/           # TypeScript definitions
-└── App.tsx          # Main application
+stock-advisor/
+├── src/
+│   ├── components/
+│   │   ├── advisor/        # AI Advisor chat interface
+│   │   ├── common/         # Navigation, StockCard, RatingCircle
+│   │   ├── home/           # HomeTab, SearchTab, ProfileTab
+│   │   ├── learn/          # LearnTab with lessons
+│   │   ├── onboarding/     # User onboarding flow
+│   │   └── stock/          # StockDetail view
+│   ├── contexts/
+│   │   ├── AppContext.tsx  # App state management
+│   │   └── UserContext.tsx # User profile management
+│   ├── services/
+│   │   ├── stockData.ts    # 20 mock stocks with price history
+│   │   ├── aiRating.ts     # Rating/prediction algorithms
+│   │   └── learningContent.ts # 10+ lessons, badges
+│   ├── types/
+│   │   └── index.ts        # TypeScript definitions
+│   ├── App.tsx             # Main application
+│   └── index.css           # Tailwind styles
+├── Dockerfile              # For Fly.io deployment
+├── fly.toml                # Fly.io configuration
+└── package.json
 ```
 
 ### AI Rating Formula
@@ -149,9 +161,13 @@ Overall Score =
 
 ## Getting Started
 
+### Local Development
+
 ```bash
-# Install dependencies
+# Navigate to app directory
 cd stock-advisor
+
+# Install dependencies
 npm install
 
 # Start development server
@@ -159,6 +175,62 @@ npm start
 
 # Build for production
 npm run build
+```
+
+### Deploy to Fly.io
+
+```bash
+cd stock-advisor
+
+# Login to Fly.io
+fly auth login
+
+# Deploy
+fly deploy
+
+# Open in browser
+fly open
+```
+
+## Deployment Files
+
+### Dockerfile
+```dockerfile
+FROM node:18-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci
+
+COPY . .
+RUN npm run build
+
+RUN npm install -g serve
+
+EXPOSE 8080
+
+CMD ["serve", "-s", "build", "-l", "8080"]
+```
+
+### fly.toml
+```toml
+app = "david-sticks-ai-abzdzq"
+primary_region = "iad"
+
+[build]
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1
 ```
 
 ## Disclaimers
